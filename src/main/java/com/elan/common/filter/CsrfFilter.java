@@ -1,6 +1,7 @@
 package com.elan.common.filter;
 
 import com.elan.common.response.ResponseResultUtils;
+import com.elan.common.utils.GenerationUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -24,7 +25,9 @@ import java.util.regex.Pattern;
 public class CsrfFilter implements Filter {
     private static Logger logger = LoggerFactory.getLogger(CsrfFilter.class);
 
-    public List<String> excludes = new ArrayList<String>();
+    private List<String> excludes = new ArrayList<String>();
+
+
 
     private boolean isOpen = false;//是否开启该filter
 
@@ -36,26 +39,37 @@ public class CsrfFilter implements Filter {
             return ;
         }
         if(logger.isDebugEnabled()){
-            logger.debug("csrf filter is running");
+            logger.debug("csrf filter is running~~~~~~~~~~~~");
         }
 
-        HttpSession session = req.getSession();
-        Object token = session.getAttribute("token");
+        //不是post不进行处理
         if("post".equalsIgnoreCase(req.getMethod())==false){
             filterChain.doFilter(request, response);
             return;
         }
 
-        String requestToken = req.getParameter("token");
-        if(StringUtils.isBlank(requestToken) || requestToken.equals(token)==false){
+        HttpSession session = req.getSession();
+        //session中的csrf_token
+        String csrf_key = "csrf_token";
+        Object csrf_token = session.getAttribute(csrf_key);
+
+        //在request参数或header中获取csrf_token
+        String requestToken = req.getParameter("csrf_token");
+        if(StringUtils.isEmpty(requestToken)){
+            requestToken=req.getHeader("csrf_token");
+        }
+        //不存在csrf_token，返回错误信息
+        if(StringUtils.isBlank(requestToken) || requestToken.equals(csrf_token)==false){
             resp.setContentType("text/plain;charset=UTF-8");
-             resp.setCharacterEncoding("utf-8");
+            resp.setCharacterEncoding("utf-8");
             ObjectMapper mapper = new ObjectMapper();
-            resp.getWriter().print(mapper.writeValueAsString(ResponseResultUtils.error(100,"无效的token")));
+            resp.getWriter().print(mapper.writeValueAsString(ResponseResultUtils.error(100,"无效的csrf_token")));
             return ;
         }
-        filterChain.doFilter(request, response);
+
+        filterChain.doFilter(req, resp);
     }
+
 
     private boolean handleExcludeURL(HttpServletRequest request, HttpServletResponse response) {
         if (excludes == null || excludes.isEmpty()) {
