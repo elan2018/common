@@ -11,7 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *  可以不使用此过滤器，springmvc4已经提供更加强大的类
+ *  可以不使用此过滤器，springmvc4已经提供更加强大的类,直接应用在类或方法上
+ *  @CrossOrigin(origins = "http://domain2.com", maxAge = 3600)
  */
 public class CorsFilter implements Filter {
     private static Logger logger = LoggerFactory.getLogger(CorsFilter.class);

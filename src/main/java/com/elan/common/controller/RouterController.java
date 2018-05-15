@@ -9,9 +9,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class RouterController {
 
-    @Value("${page.router.path:/html}")
-    private String mapping;
-
     @Value("${page.router.dir:/demo}")
     private String dir;
     /**
@@ -21,6 +18,11 @@ public class RouterController {
      */
     @RequestMapping(value = "${page.router.path:/html}/{page}",method = RequestMethod.GET)
     public String router(@PathVariable  String page){
-        return dir+"/"+page;
+        String[] fg = page.split("-");
+        String url="";
+        for(String p :fg){
+            url  +="/"+p;
+        }
+        return dir+url;
     }
 }
