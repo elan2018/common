@@ -43,7 +43,7 @@ public class CsrfFilter implements Filter {
         }
 
         //不是post不进行处理
-        if("post".equalsIgnoreCase(req.getMethod())==false){
+        if("post".equalsIgnoreCase(req.getMethod())==false || handleExcludeURL(req, resp)){
             filterChain.doFilter(request, response);
             return;
         }

@@ -60,7 +60,7 @@ public class LogFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         if (isOpen){
             HttpServletRequest request=(HttpServletRequest)servletRequest;
-            if(handleExcludeURL(request)) {
+            if(!handleExcludeURL(request)) {
                 String url = request.getRequestURI();
                 String param = request.getQueryString();
                 String method = request.getMethod();
