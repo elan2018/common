@@ -63,12 +63,12 @@ public class LogFilter implements Filter {
             if(handleExcludeURL(request)) {
                 String url = request.getRequestURI();
                 String param = request.getQueryString();
-                if (request.getMethod().equalsIgnoreCase("post")) {
+                String method = request.getMethod();
+                if (method.equalsIgnoreCase("post")) {
                     Map<String, String[]> params = request.getParameterMap();
                     Set keys = params.keySet();
-                    //keys.iterator();
                 }
-                logger.info("url=" + url, "query=" + param);
+                logger.info("url=" + url,"method="+method, "query=" + param);
             }
         }
         filterChain.doFilter(servletRequest,servletResponse);

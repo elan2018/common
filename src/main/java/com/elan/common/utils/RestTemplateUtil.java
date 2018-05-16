@@ -16,6 +16,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * HTTP请求访问工具
+ */
 public class RestTemplateUtil {
     private Logger logger = LoggerFactory.getLogger(RestTemplateUtil.class);
 
@@ -127,9 +130,7 @@ public class RestTemplateUtil {
         }
         requestHeaders.setContentType(MediaType.APPLICATION_JSON);
         //获取parameter信息
-//        if(params == null) {
-//            params = request.getParameterMap();
-//        }
+
         String urlParam ="";
         if (params!=null && params.size()>0){
             Iterator<String> iter = params.keySet().iterator();

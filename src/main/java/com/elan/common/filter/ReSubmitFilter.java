@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 public class ReSubmitFilter implements Filter{
         private static Logger logger = LoggerFactory.getLogger(ReSubmitFilter.class);
         private List<String> excludes = new ArrayList<String>();
-
         private boolean isOpen = false;//是否开启该filter
 
     @Override
