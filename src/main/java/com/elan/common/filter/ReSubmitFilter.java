@@ -59,6 +59,7 @@ public class ReSubmitFilter implements Filter{
             if (StringUtils.isNotEmpty(param)){
                 param = param.replaceAll("/","_");
                 String token_key =param+String.valueOf(param.hashCode());
+                token_key=token_key.replaceAll("-","_");
                 //更新resubmit_token
                 req.getSession().setAttribute(token_key, new_resubmit_token);
                 //将防止重复提交的key和token放入响应头
