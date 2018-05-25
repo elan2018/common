@@ -27,7 +27,7 @@ public class CsrfFilter implements Filter {
 
     private List<String> excludes = new ArrayList<String>();
 
-
+    private String test_csrf_token="";
 
     private boolean isOpen = false;//是否开启该filter
 
@@ -57,6 +57,11 @@ public class CsrfFilter implements Filter {
         String requestToken = req.getParameter("csrf_token");
         if(StringUtils.isEmpty(requestToken)){
             requestToken=req.getHeader("csrf_token");
+        }
+
+        if(StringUtils.isNoneBlank(requestToken) && requestToken.equals(test_csrf_token)){
+            filterChain.doFilter(req, resp);
+            return;
         }
         //不存在csrf_token，返回错误信息
         if(StringUtils.isBlank(requestToken) || requestToken.equals(csrf_token)==false){
@@ -103,6 +108,11 @@ public class CsrfFilter implements Filter {
         temp = filterConfig.getInitParameter("isOpen");
         if(StringUtils.isNotBlank(temp) && "true".equals(temp)){
             isOpen = true;
+        }
+
+        temp = filterConfig.getInitParameter("test-token");
+        if(StringUtils.isNotBlank(temp)){
+            test_csrf_token = temp;
         }
     }
 

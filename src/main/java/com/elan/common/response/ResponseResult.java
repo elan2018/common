@@ -3,14 +3,16 @@ package com.elan.common.response;
 import java.io.Serializable;
 
 public class ResponseResult implements Serializable{
-    private Integer code=0;
-    private String message="ok";
+    private Integer code=-1;
+    private String message="";
     private Object data;
 
     public ResponseResult(){
 
     }
     public ResponseResult(Object data){
+        this.code = 0;
+        this.message = "ok";
         this.data = data;
     }
     public ResponseResult(Integer code,String message){

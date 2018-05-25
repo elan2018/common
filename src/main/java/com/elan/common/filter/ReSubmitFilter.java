@@ -23,6 +23,7 @@ public class ReSubmitFilter implements Filter{
         private static Logger logger = LoggerFactory.getLogger(ReSubmitFilter.class);
         private List<String> excludes = new ArrayList<String>();
         private boolean isOpen = false;//是否开启该filter
+        private String test_resubmit_token=""; //测试的resubmitToken
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -42,6 +43,13 @@ public class ReSubmitFilter implements Filter{
         if(StringUtils.isNotBlank(temp) && "true".equals(temp)){
             isOpen = true;
         }
+
+        temp = filterConfig.getInitParameter("test-token");
+        if(StringUtils.isNotBlank(temp)){
+            test_resubmit_token = temp;
+        }
+
+
     }
 
     @Override
@@ -91,7 +99,6 @@ public class ReSubmitFilter implements Filter{
         HttpSession session = req.getSession();
 
         //防止重复提交token的key
-
         String token_key_name = req.getHeader("resubmit_key");
         if(StringUtils.isEmpty(token_key_name)){
             token_key_name = req.getParameter("resubmit_key");
@@ -109,16 +116,19 @@ public class ReSubmitFilter implements Filter{
                 return ;
             }
         }
-
-        Object resubmit_token = req.getSession().getAttribute(token_key_name);
-        if (resubmit_token!=null ){//服务器redis中的token
-            if (!request_resubmit_token.equals((String)resubmit_token)){
-                goBack(resp,100,"无效的resubmit_token");
-                return ;
+        if(request_resubmit_token.equals(test_resubmit_token)){
+            //测试时使用
+        }else {
+            Object resubmit_token = req.getSession().getAttribute(token_key_name);
+            if (resubmit_token != null) {//服务器redis中的token
+                if (!request_resubmit_token.equals((String) resubmit_token)) {
+                    goBack(resp, 100, "无效的resubmit_token");
+                    return;
+                }
+            } else {//服务器redis存储失败时
+                goBack(resp, 500, "服务器的resubmit_token获取失败");
+                return;
             }
-        }else{//服务器redis存储失败时
-            goBack(resp,500,"服务器的resubmit_token获取失败");
-            return ;
         }
         String new_resubmit_token =GenerationUtil.uuid();
         //更新resubmit_token
